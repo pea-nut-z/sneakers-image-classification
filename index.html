@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="public/peanut.ico" />
+    <title>Image Classification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Use the power of Machine Learning to search by image." />
+    <link rel="stylesheet" href="public/styles.css" />
+  </head>
+  <body>
+    <main role="main">
+      <div id="title-msg-container">
+        <a id="title-container" href="/index.html"
+          ><image id="bag" src="public/images/shopify-bag.png" />
+          <div id="title">Image Classification</div>
+        </a>
+        <div id="msg-bubble-container">
+          <div id="progress-container">
+            <div id="progress-dots">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <h6 id="progress-msg"></h6>
+          </div>
+          <div id="welcome-gif-container"></div>
+          <div id="res-container">
+            <h6 id="res-msg"></h6>
+          </div>
+          <image id="message-bubble" src="public/images/message-bubble.png"></image>
+        </div>
+      </div>
+
+      <div id="btns-input-container">
+        <div id="upload-btn-input-container">
+          <input id="file-selector" class="hide" type="file" />
+          <label for="file-selector" id="upload-btn">Choose an image</label>
+          <input id="url-input" placeholder="Paste URL here" type="text" />
+        </div>
+        <div id="submit-btns-container">
+          <button id="enter-btn" class="btn">Enter</button>
+          <button id="predict-btn" class="btn">Predict</button>
+        </div>
+      </div>
+      <hr />
+      <div id="results-container">
+        <div class="result-container">
+          <div class="subtitle">- Image -</div>
+          <div id="selected-image-container"></div>
+        </div>
+        <div class="result-container">
+          <div>
+            <div class="subtitle">- Predictions -</div>
+            <div id="percentage-accuracy"></div>
+            <br />
+            <div id="item-details">
+              <span class="key hide">NAME:</span>
+              <span id="name"></span>
+              <br />
+              <span class="key hide">STYLE:</span>
+              <span id="style"></span>
+              <br />
+              <span class="key hide">DATE:</span>
+              <span id="release"></span>
+            </div>
+          </div>
+          <div id="predicted-images-container"></div>
+        </div>
+      </div>
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.2.7/dist/tf.min.js"></script>
+    <script src="public/data/target_classes.js"></script>
+    <script src="predict.js"></script>
+  </body>
+</html>
