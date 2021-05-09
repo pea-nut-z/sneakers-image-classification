@@ -1,5 +1,7 @@
 ## An image classification browser app for Yeezy sneakers.
 
+[Link to app](https://pea-nut-z.github.io/sneakers-image-classification/)
+
 ### Context
 
 The purpose of this project is to demonstrate backend functionalities and not machine learning. Thus, it has a couple of flaws.  
