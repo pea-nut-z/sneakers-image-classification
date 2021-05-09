@@ -93,7 +93,7 @@ async function analyzeImg() {
     // toggleLoading();
     // respond("predict-complete");
 
-    const query = window.location.origin;
+    const query = window.location.pathname;
     console.log({ query });
     images.forEach((image) => {
       $("#predicted-images-container").append(
