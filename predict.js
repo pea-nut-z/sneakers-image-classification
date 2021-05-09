@@ -33,6 +33,7 @@ function respond(res) {
   // newImg = false && brokenImg = false (click predict twice)
   if (res === "broken-file") msg = "Invalid image format.";
   if (res === "double-clicked-predict") msg = "You've clicked predict again!";
+  if (res === "predicted-image-error") msg = "There was an error getting the images.";
   $("#res-msg").html(msg);
 }
 
@@ -93,18 +94,20 @@ async function analyzeImg() {
     // toggleLoading();
     // respond("predict-complete");
 
-    const query = window.location.pathname;
-    console.log({ query });
+    const path = "https://pea-nut-z.github.io/sneakers-image-classification/";
+    // const path = ""
+    // why not use window?
+    // const query = window.location.pathname;
     images.forEach((image) => {
       $("#predicted-images-container").append(
-        `<img id="predicted-image" src="${query}${image}" crossorigin='anonymous' alt='' >`
+        `<img id="predicted-image" src="${path}${image}" crossorigin='anonymous' alt='' >`
       );
     });
 
     $("#predicted-image").on("error", function () {
       clearAllData();
       toggleLoading();
-      console.log("failed to appened images from data.");
+      respond("predicted-image-error");
       return;
     });
 
