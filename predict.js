@@ -86,14 +86,6 @@ async function analyzeImg() {
     $("#style").html(style);
     $("#release").html(release);
 
-    // images.forEach((image) => {
-    //   $("#predicted-images-container").append(
-    //     `<img id="predicted-image" src="${image}" crossorigin='anonymous' alt='' >`
-    //   );
-    // });
-    // toggleLoading();
-    // respond("predict-complete");
-
     const path = "https://pea-nut-z.github.io/sneakers-image-classification/";
     // const path = ""
     // why not use window?
