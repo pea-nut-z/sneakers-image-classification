@@ -36,8 +36,10 @@ function respond(res) {
   $("#res-msg").html(msg);
 }
 
-function clearAllData() {
-  $("#selected-image-container").empty();
+function clearAllData(include) {
+  if (include === "selected-image") {
+    $("#selected-image-container").empty();
+  }
   $("#predicted-images-container").empty();
   $("#percentage-accuracy").empty();
   $(".key").addClass("hide");
@@ -73,31 +75,49 @@ async function analyzeImg() {
       .slice(0, 1);
 
     let item = match[0].className;
-    const { tag, name, style, release } = item;
+    const { tag, name, style, release, images } = item;
     let percentage = match[0].probability.toFixed(2) * 100;
 
+    // catch error msg
     $(".key").removeClass("hide");
     $("#percentage-accuracy").html(`Percentage Accuracy: ${percentage}%`);
     $("#name").html(name);
     $("#style").html(style);
     $("#release").html(release);
-    $.ajax({
-      url: `public/data/${tag}`,
-      success: function (data) {
-        $(data)
-          .find("a")
-          .attr("href", function (i, val) {
-            if (val.match(/\.(jpe?g)$/)) {
-              $("#predicted-images-container").append(
-                `<img id="predicted-image" src="${val}" crossorigin='anonymous' alt='' >`
-              );
-            }
-          });
-      },
+    console.log({ images });
+    images.forEach((image) => {
+      $("#predicted-images-container").append(
+        `<img id="predicted-image" src="${image}" crossorigin='anonymous' alt='' >`
+      );
     });
-    newImg = false;
     toggleLoading();
     respond("predict-complete");
+
+    // $.ajax({
+    //   url: `/public/data/${tag}`,
+    //   success: function (data) {
+    //     // parse data
+    //     //loop over the array
+    //     // use window.location to find out what url you are at
+    //     $(data)
+    //       .find("a")
+    //       .attr("href", function (i, val) {
+    //         if (val.match(/\.(jpe?g)$/)) {
+    //           $("#predicted-images-container").append(
+    //             `<img id="predicted-image" src="${val}" crossorigin='anonymous' alt='' >`
+    //           );
+    //         }
+    //       });
+    //     toggleLoading();
+    //     respond("predict-complete");
+    //   },
+    //   error: function () {
+    //     clearAllData();
+    //     toggleLoading();
+    //     respond("predict-error");
+    //   },
+    // });
+    newImg = false;
   } catch {
     toggleLoading();
     respond("predict-error");
@@ -120,7 +140,7 @@ async function uploadFile() {
     let selected = this.files.length;
     if (selected) {
       toggleLoading();
-      clearAllData();
+      clearAllData("selected-image");
       const path = URL.createObjectURL(event.target.files[0]);
       $("#selected-image-container").append(
         `<img id="selected-image" src="${path}" crossorigin="anonymous" alt="">`
@@ -170,7 +190,7 @@ function onEnter() {
 
     $("#enter-btn").html("👌");
     toggleLoading();
-    clearAllData();
+    clearAllData("selected-image");
 
     setTimeout(() => {
       $("#enter-btn").html("Enter");

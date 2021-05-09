@@ -16,6 +16,12 @@ TARGET_CLASSES = {
     name: "Adidas Yeezy Boost 350 V2 Blue Tint",
     style: "B37571",
     release: "12/16/2017",
+    images: [
+      "/public/data/blue-tint/Blue-Tint-1.jpeg",
+      "/public/data/blue-tint/Blue-Tint-2.jpeg",
+      "/public/data/blue-tint/Blue-Tint-3.jpeg",
+      "/public/data/blue-tint/Blue-Tint-4.jpeg",
+    ],
   },
   3: {
     tag: "pure-platinum",
