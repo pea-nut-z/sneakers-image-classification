@@ -25,7 +25,7 @@ function respond(res) {
   let msg;
   if (res === "upload-complete") msg = "Click predict!";
   if (res === "predict-complete") msg = "See predictions!";
-  if (res === "predict-error") msg = "No similar items were found.";
+  if (res === "no-prediction-returned") msg = "No similar items were found.";
   // click predict when there's a broken img
   if (res === "broken-url") msg = "Invalid or no access to image URL. Try again!";
   // newImg = false && brokenImg = true (click predict before enter /empty url / broken img)
@@ -84,12 +84,32 @@ async function analyzeImg() {
     $("#name").html(name);
     $("#style").html(style);
     $("#release").html(release);
-    console.log({ images });
+
+    // images.forEach((image) => {
+    //   $("#predicted-images-container").append(
+    //     `<img id="predicted-image" src="${image}" crossorigin='anonymous' alt='' >`
+    //   );
+    // });
+    // toggleLoading();
+    // respond("predict-complete");
+
+    const query = window.location.origin;
+    console.log({ query });
     images.forEach((image) => {
       $("#predicted-images-container").append(
-        `<img id="predicted-image" src="${image}" crossorigin='anonymous' alt='' >`
+        `<img id="predicted-image" src="${query}${image}" crossorigin='anonymous' alt='' >`
       );
     });
+
+    $("#predicted-image").on("error", function () {
+      clearAllData();
+      toggleLoading();
+      console.log("failed to appened images from data.");
+      return;
+    });
+
+    console.log("RAN");
+    newImg = false;
     toggleLoading();
     respond("predict-complete");
 
@@ -117,13 +137,11 @@ async function analyzeImg() {
     //     respond("predict-error");
     //   },
     // });
-    newImg = false;
   } catch {
     toggleLoading();
-    respond("predict-error");
+    respond("no-prediction-returned");
   }
 }
-
 async function setLayout() {
   $("#enter-btn").prop("disabled", true);
   $("#predict-btn").prop("disabled", true);
@@ -204,11 +222,6 @@ function onEnter() {
       respond("upload-complete");
       brokenImg = false;
       newImg = true;
-    });
-
-    $("#selected-image").on("error", function () {
-      $("#selected-image-container").empty();
-      respond("broken-url");
     });
   });
 }
