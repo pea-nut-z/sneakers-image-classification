@@ -86,8 +86,8 @@ async function analyzeImg() {
     $("#style").html(style);
     $("#release").html(release);
 
-    const path = "https://pea-nut-z.github.io/sneakers-image-classification/";
-    // const path = ""
+    // const path = "https://pea-nut-z.github.io/sneakers-image-classification/";
+    const path = "";
     // why not use window?
     // const query = window.location.pathname;
     images.forEach((image) => {
@@ -108,6 +108,7 @@ async function analyzeImg() {
     toggleLoading();
     respond("predict-complete");
 
+    // Initially images stored in the filesystem directory will be returned when a prediction is made. However, Github does not have static directories set up out of the box. I changed my code to accommodate that.
     // $.ajax({
     //   url: `/public/data/${tag}`,
     //   success: function (data) {
@@ -138,10 +139,12 @@ async function analyzeImg() {
   }
 }
 async function setLayout() {
-  $("#enter-btn").prop("disabled", true);
-  $("#predict-btn").prop("disabled", true);
   toggleLoading();
-  model = await tf.loadGraphModel("model/model.json");
+  try {
+    model = await tf.loadGraphModel("model/model.json");
+  } catch {
+    console.log("Model did not get loaded");
+  }
   toggleLoading();
   $("#welcome-gif-container").append(
     '<img id="welcome-gif" src="public/images/welcome.gif" crossorigin="anonymous" alt="" >'
@@ -217,6 +220,9 @@ function onEnter() {
       respond("upload-complete");
       brokenImg = false;
       newImg = true;
+    });
+    $("#selected-image").on("error", function () {
+      respond("broken-url");
     });
   });
 }
