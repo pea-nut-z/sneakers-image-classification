@@ -1,8 +1,3 @@
-// enter selected img again (resets result img)
-// click predict again when theres a img (retun nothing happens)
-// space within url input / space in the start and end of url / space only
-// cancel file input when there's a selected image
-// clear alll data when selected new image
 function toggleLoading() {
   $("#res-msg").empty();
   $("#welcome-gif-container").empty();
@@ -64,10 +59,9 @@ async function analyzeImg() {
     let predictions = await model.predict(tensor).data();
     let match = Array.from(predictions)
       .map(function (p, i) {
-        // this is Array.map
         return {
           probability: p,
-          className: TARGET_CLASSES[i], // we are selecting the value from the obj
+          className: TARGET_CLASSES[i],
         };
       })
       .sort(function (a, b) {
@@ -79,36 +73,37 @@ async function analyzeImg() {
     const { tag, name, style, release, images } = item;
     let percentage = match[0].probability.toFixed(2) * 100;
 
-    // catch error msg
     $(".key").removeClass("hide");
     $("#percentage-accuracy").html(`Percentage Accuracy: ${percentage}%`);
     $("#name").html(name);
     $("#style").html(style);
     $("#release").html(release);
 
-    // const path = "https://pea-nut-z.github.io/sneakers-image-classification/";
-    const path = "";
-    // why not use window?
-    // const query = window.location.pathname;
+    const path = "https://pea-nut-z.github.io/sneakers-image-classification/";
+    // const path = "";
+
     images.forEach((image) => {
       $("#predicted-images-container").append(
         `<img id="predicted-image" src="${path}${image}" crossorigin='anonymous' alt='' >`
       );
     });
 
+    toggleLoading();
+    $("#selected-image").on("load", function () {
+      newImg = false;
+      respond("predict-complete");
+    });
+
     $("#predicted-image").on("error", function () {
       clearAllData();
-      toggleLoading();
       respond("predicted-image-error");
       return;
     });
 
-    console.log("RAN");
-    newImg = false;
-    toggleLoading();
-    respond("predict-complete");
-
-    // Initially images stored in the filesystem directory will be returned when a prediction is made. However, Github does not have static directories set up out of the box. I changed my code to accommodate that.
+    // Initially images stored in the filesystem directory will be
+    // returned when a prediction is made.However, Github does not
+    // have static directories set up out of the box.I changed my
+    // code to accommodate that.
 
     // $.ajax({
     //   url: `/public/data/${tag}`,
@@ -172,6 +167,7 @@ async function uploadFile() {
       newImg = true;
     });
     $("#selected-image").on("error", function () {
+      clearAllData();
       respond("broken-file");
     });
   });
