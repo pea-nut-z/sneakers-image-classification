@@ -42,4 +42,5 @@ I am using Jquery and Jest testing. It has been difficult to find good resources
 ### Image recognition tools used
 
 [Azure Custom Vision](https://www.customvision.ai/) to train and build the model
+
 [Tensorflow](https://www.tensorflow.org/) to collect and pre-process the data of selected image

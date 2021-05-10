@@ -150,7 +150,7 @@ a:active {
 #btns-input-container {
   display: flex;
   flex-direction: row;
-  height: 35 px;
+  height: 35px;
   width: 100%;
   margin-bottom: 20px;
 }
