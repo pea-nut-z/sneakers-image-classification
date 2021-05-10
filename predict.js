@@ -89,7 +89,7 @@ async function analyzeImg() {
     });
 
     toggleLoading();
-    $("#selected-image").on("load", function () {
+    $("#predicted-image").on("load", function () {
       newImg = false;
       respond("predict-complete");
     });
@@ -275,15 +275,15 @@ onPredict();
 // module.exports.respond = respond;
 // module.exports.clearAllData = clearAllData;
 
-module.exports = {
-  setLayout,
-  uploadFile,
-  toggleEnterButton,
-  togglePredictButton,
-  onEnter,
-  onPredict,
-  toggleLoading,
-  respond,
-  clearAllData,
-  analyzeImg,
-};
+// module.exports = {
+//   setLayout,
+//   uploadFile,
+//   toggleEnterButton,
+//   togglePredictButton,
+//   onEnter,
+//   onPredict,
+//   toggleLoading,
+//   respond,
+//   clearAllData,
+//   analyzeImg,
+// };
