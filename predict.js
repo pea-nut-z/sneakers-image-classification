@@ -109,6 +109,7 @@ async function analyzeImg() {
     respond("predict-complete");
 
     // Initially images stored in the filesystem directory will be returned when a prediction is made. However, Github does not have static directories set up out of the box. I changed my code to accommodate that.
+
     // $.ajax({
     //   url: `/public/data/${tag}`,
     //   success: function (data) {
@@ -222,6 +223,7 @@ function onEnter() {
       newImg = true;
     });
     $("#selected-image").on("error", function () {
+      clearAllData("selected-image");
       respond("broken-url");
     });
   });

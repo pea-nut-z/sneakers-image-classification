@@ -5,7 +5,7 @@
   --phone: 480px;
    */
 
-@media screen and (max-width: 976px) {
+@media screen and (max-width: 1140px) {
   #title-msg-container {
     flex-direction: column !important;
   }
@@ -29,6 +29,8 @@
   #submit-btns-container {
     width: 100% !important;
     justify-content: space-between;
+    height: 100%;
+    padding-top: 10px;
   }
   .btn {
     width: 49% !important;
@@ -72,6 +74,8 @@ body {
 }
 .subtitle {
   font-size: 22px;
+  /* background-color: pink; */
+  margin-top: 20px;
 }
 .hide {
   display: none;
@@ -146,32 +150,29 @@ a:active {
 #btns-input-container {
   display: flex;
   flex-direction: row;
-  height: 32px;
+  height: 35 px;
   width: 100%;
+  margin-bottom: 20px;
 }
 #upload-btn-input-container {
   display: flex;
   flex-direction: row;
   width: 75%;
 }
-/* #file-selector {
-  display: none;
-} */
 #upload-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 30%;
-  height: 100%;
   border-radius: 5px;
   border: 1px solid black;
   background-color: rgb(196, 94, 255);
   color: white;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
 }
 #url-input {
-  line-height: 32px;
+  line-height: 35px;
   margin-left: 10px;
   width: 100%;
   border: 1px solid black;
@@ -186,6 +187,7 @@ a:active {
 }
 ::placeholder {
   padding-left: 10px;
+  font-size: 15px;
 }
 
 /* ENTER & PREDICT BUTTONS */
@@ -205,14 +207,20 @@ a:active {
   width: 50%;
   height: 100%;
   margin-left: 10px;
+  font-size: 15px;
 }
 .btn:focus {
   outline: none !important;
   box-shadow: 0 0 10px rgb(129, 212, 208);
 }
 
+#break {
+  width: 100%;
+  height: 1px;
+  background-color: black;
+}
 #selected-image {
-  margin-top: 10px;
+  margin-top: 20px;
   width: 50%;
   border: 1px solid black;
   border-radius: 5px;
@@ -229,7 +237,7 @@ a:active {
   height: inherit * 10;
 }
 #predicted-image {
-  margin-top: 10px;
+  margin-top: 20px;
   margin-right: 10px;
   width: 44%;
   border: 1px solid black;
