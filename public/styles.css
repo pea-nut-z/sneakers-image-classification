@@ -5,7 +5,7 @@
   --phone: 480px;
    */
 
-@media screen and (max-width: 1140px) {
+@media screen and (max-width: 1320px) {
   #title-msg-container {
     flex-direction: column !important;
   }
@@ -168,7 +168,7 @@ a:active {
   border: 1px solid black;
   background-color: rgb(196, 94, 255);
   color: white;
-  font-size: 15px;
+  font-size: 19px;
   cursor: pointer;
 }
 #url-input {
@@ -179,6 +179,7 @@ a:active {
   border-radius: 5px;
   background-color: rgb(215, 250, 242);
   text-indent: 10px;
+  font-size: 20px;
 }
 #url-input:focus {
   background-color: rgb(215, 250, 242);
@@ -207,7 +208,7 @@ a:active {
   width: 50%;
   height: 100%;
   margin-left: 10px;
-  font-size: 15px;
+  font-size: 20px;
 }
 .btn:focus {
   outline: none !important;
