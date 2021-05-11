@@ -79,7 +79,7 @@ async function analyzeImg() {
     $("#style").html(style);
     $("#release").html(release);
 
-    const path = "https://pea-nut-z.github.io/sneakers-image-classification/";
+    const path = "https://pea-nut-z.github.io/sneakers-image-classification";
     // const path = "";
 
     images.forEach((image) => {
