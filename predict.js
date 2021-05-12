@@ -23,12 +23,12 @@ function respond(res) {
   if (res === "no-prediction-returned") msg = "No similar items were found.";
   // click predict when there's a broken img
   if (res === "broken-url") msg = "Invalid or no access to image URL. Try again!";
-  // newImg = false && brokenImg = true (click predict before enter /empty url / broken img)
-  if (res === "no-selected-image") msg = "Upload an image first...";
   // newImg = false && brokenImg = false (click predict twice)
   if (res === "broken-file") msg = "Invalid image format.";
   if (res === "double-clicked-predict") msg = "You've clicked predict again!";
   if (res === "predicted-image-error") msg = "There was an error getting the images.";
+  // general
+  if (res === "error") msg = "There is an error.";
   $("#res-msg").html(msg);
 }
 
@@ -80,7 +80,6 @@ async function analyzeImg() {
     $("#release").html(release);
 
     const path = "https://pea-nut-z.github.io/sneakers-image-classification";
-    // const path = "";
 
     images.forEach((image) => {
       $("#predicted-images-container").append(
@@ -167,7 +166,8 @@ async function uploadFile() {
       newImg = true;
     });
     $("#selected-image").on("error", function () {
-      clearAllData();
+      $("#predict-btn").prop("disabled", true);
+      clearAllData("selected-image");
       respond("broken-file");
     });
   });
@@ -186,8 +186,8 @@ function toggleEnterButton() {
 
 function togglePredictButton() {
   $("#selected-image-container").on("DOMSubtreeModified", function () {
-    let image = $("#selected-image-container").is(":empty");
-    if (!image) {
+    let empty = $("#selected-image-container").is(":empty");
+    if (!empty) {
       $("#predict-btn").prop("disabled", false);
     }
   });
@@ -219,6 +219,7 @@ function onEnter() {
       newImg = true;
     });
     $("#selected-image").on("error", function () {
+      $("#predict-btn").prop("disabled", true);
       clearAllData("selected-image");
       respond("broken-url");
     });
@@ -240,7 +241,7 @@ function onPredict() {
     } else if (!newImg && !brokenImg) {
       respond("double-clicked-predict");
     } else {
-      respond("no-selected-image");
+      respond("error");
     }
   });
 }
@@ -267,23 +268,3 @@ onEnter();
 
 // ON PREDICT
 onPredict();
-
-// module.exports.setLayout = setLayout;
-// module.exports.uploadFile = uploadFile;
-// module.exports.toggleEnterButton = toggleEnterButton;
-// module.exports.togglePredictButton = togglePredictButton;
-// module.exports.respond = respond;
-// module.exports.clearAllData = clearAllData;
-
-// module.exports = {
-//   setLayout,
-//   uploadFile,
-//   toggleEnterButton,
-//   togglePredictButton,
-//   onEnter,
-//   onPredict,
-//   toggleLoading,
-//   respond,
-//   clearAllData,
-//   analyzeImg,
-// };
