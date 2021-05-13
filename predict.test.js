@@ -241,7 +241,6 @@ describe("upload an image when data from previous image is still present", () =>
     // ENTER SECOND IMAGE
     await page.$eval("#url-input", (el) => el.setSelectionRange(0, el.value.length));
     await page.keyboard.press("Backspace");
-    // await page.click("#url-input");
     await page.type("#url-input", testImage2);
     await page.click("#enter-btn");
 
