@@ -19,7 +19,7 @@ function respond(res) {
   $("#welcome-gif-container").empty();
   let msg;
   if (res === "upload-complete") msg = "Click predict!";
-  if (res === "predict-complete") msg = "See predictions!";
+  if (res === "predict-complete") msg = "See prediction!";
   if (res === "no-prediction-returned") msg = "No similar items were found.";
   // click predict when there's a broken img
   if (res === "broken-url") msg = "Invalid or no access to image URL. Try again!";
@@ -134,15 +134,17 @@ async function analyzeImg() {
   }
 }
 async function setLayout() {
+  const path = "https://pea-nut-z.github.io/sneakers-image-classification";
   toggleLoading();
   try {
-    model = await tf.loadGraphModel("model/model.json");
+    model = await tf.loadGraphModel(`${path}/model/model.json`);
+    console.log("model loaded");
   } catch {
     console.log("Model did not get loaded");
   }
   toggleLoading();
   $("#welcome-gif-container").append(
-    '<img id="welcome-gif" src="public/images/welcome.gif" crossorigin="anonymous" alt="" >'
+    `<img id="welcome-gif" src="${path}/public/images/welcome.gif" crossorigin="anonymous" alt="" >`
   );
 }
 

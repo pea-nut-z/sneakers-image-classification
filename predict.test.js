@@ -2,8 +2,9 @@ import puppeteer from "puppeteer";
 
 let browser, page;
 const app = "file:/Users/paulinez/image-classification/web/index.html";
-const testImage =
-  "https://pea-nut-z.github.io/sneakers-image-classification/public/data/beluga/Beluga2.0-1.jpeg";
+const githubPath = "https://pea-nut-z.github.io/sneakers-image-classification";
+const testImage1 = `${githubPath}/public/data/beluga/Beluga2.0-1.jpeg`;
+const testImage2 = `${githubPath}/public/data/blue-tint/Blue-Tint-1.jpeg`;
 const brokenImage = "https://pea-nut-z.github.io.jpeg";
 
 describe("Initial layout", () => {
@@ -43,7 +44,7 @@ describe("Initial layout", () => {
       return container.innerHTML;
     });
     expect(container).toContain(
-      '<img id="welcome-gif" src="public/images/welcome.gif" crossorigin="anonymous" alt="">'
+      `<img id="welcome-gif" src="${githubPath}/public/images/welcome.gif" crossorigin="anonymous" alt="">`
     );
   });
 });
@@ -77,7 +78,7 @@ describe("Enter and predict buttons do toggle", () => {
     await page.keyboard.press("End");
     await page.keyboard.press("Backspace");
     await page.click("#url-input");
-    await page.type("#url-input", testImage);
+    await page.type("#url-input", testImage1);
     await page.click("#enter-btn");
     let isDisabled = await page.$eval("#predict-btn", (button) => {
       return button.disabled;
@@ -89,11 +90,12 @@ describe("Enter and predict buttons do toggle", () => {
 describe("A successful image url upload with prediction returned", () => {
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       slowMo: 20,
     });
     page = await browser.newPage();
     await page.goto(app);
+    jest.setTimeout(30000);
   });
 
   afterAll(async () => {
@@ -101,9 +103,8 @@ describe("A successful image url upload with prediction returned", () => {
   });
 
   it("renders a hand emoji on enter button when uploading is trigged", async () => {
-    jest.setTimeout(30000);
     await page.click("#url-input");
-    await page.type("#url-input", testImage);
+    await page.type("#url-input", testImage1);
     await page.click("#enter-btn");
     let enterBtn = await page.$eval("#enter-btn", (button) => {
       return button.innerHTML;
@@ -112,10 +113,12 @@ describe("A successful image url upload with prediction returned", () => {
   });
 
   it("renders selected image successfully from url input", async () => {
-    let image = await page.waitForSelector("#selected-image", (image) => {
-      return image;
+    let container = await page.$eval("#selected-image-container", (container) => {
+      return container.innerHTML;
     });
-    expect(image).toBeTruthy();
+    expect(container).toContain(
+      `<img id="selected-image" src="${githubPath}/public/data/beluga/Beluga2.0-1.jpeg" crossorigin="anonymous" alt="">`
+    );
   });
 
   it("renders a message: 'Click Predict!'", async () => {
@@ -125,7 +128,9 @@ describe("A successful image url upload with prediction returned", () => {
     expect(msg).toBe("Click predict!");
   });
 
-  it("renders a hand emoji on predict button when predicting is trigged", async () => {
+  it("renders a hand emoji on predict button when predicting is trigged - fails sometimes", async () => {
+    // FAILS SOMETIMES
+    // try jest.setTimeout with a shorter timer to catch the text before it changes but with no success
     await page.click("#predict-btn");
     let predictBtn = await page.$eval("#predict-btn", (button) => {
       return button.innerHTML;
@@ -133,85 +138,40 @@ describe("A successful image url upload with prediction returned", () => {
     expect(predictBtn).toContain("👌");
   });
 
-  // TENSORFLOW NOT LOADING THE MODEL? NO PREDICTED IMGS WERE FOUND.
-  // CHECK FOR "SEE PREDICTIONS"
-  // WILL FIGURE THIS OUT
-  // it("renders four predicted images successfully", async () => {
-  //   let numberOfImages = await page.waitForSelector("#predicted-image", (element) => element.length);
-  //   expect(numberOfImages).toBe(4);
-  // });
-});
+  it("renders four predicted images", async () => {
+    let count = await page.$$eval("#predicted-image", (element) => element.length);
+    expect(count).toBe(4);
+  });
 
-describe("A unsuccessful image url upload ", () => {
-  beforeAll(async () => {
-    browser = await puppeteer.launch({
-      headless: false,
-      slowMo: 30,
+  it("renders the accurate prediction", async () => {
+    const percentage = await page.$eval("#percentage-accuracy", (ele) => {
+      return ele.innerHTML;
     });
-    page = await browser.newPage();
-    await page.goto(app);
+    const name = await page.$eval("#name", (ele) => {
+      return ele.innerHTML;
+    });
+    const style = await page.$eval("#style", (ele) => {
+      return ele.innerHTML;
+    });
+    const release = await page.$eval("#release", (ele) => {
+      return ele.innerHTML;
+    });
+    const imgSrc = await page.$eval("#predicted-image", (img) => {
+      return img.getAttribute("src");
+    });
+    expect(percentage).toBe("Percentage Accuracy: 98%");
+    expect(name).toBe("Adidas Yeezy Boost 350 V2 Beluga 2.0");
+    expect(style).toBe("AH2203");
+    expect(release).toBe("11/25/2017");
+    expect(imgSrc).toMatch("beluga");
   });
 
-  afterAll(async () => {
-    await browser.close();
-  });
-
-  it("renders a error message and removes broken selected image on broken image upload", async () => {
-    // TEST THIS RIGHT AFTER A SUCCESSFUL PREDICTION TO CHECK IF IT REMOVES PREVIOUS ITEM INFO AND DISABLE PREDICT BUTTON AGAIN
-    await page.click("#url-input");
-    await page.type("#url-input", brokenImage);
-    await page.click("#enter-btn");
-
+  it("renders a message: See prediction!", async () => {
     let msg = await page.$eval("#res-msg", (container) => {
       return container.innerHTML;
     });
-    let imgContainer = await page.$eval("#selected-image-container", (container) => {
-      return container.innerHTML;
-    });
-    expect(imgContainer).toBe("");
-    expect(msg).toBe("Invalid or no access to image URL. Try again!");
+    expect(msg).toBe("See prediction!");
   });
-});
-
-describe("Enter and predict error messages", () => {
-  beforeAll(async () => {
-    browser = await puppeteer.launch({
-      headless: false,
-      slowMo: 30,
-    });
-    page = await browser.newPage();
-    await page.goto(app);
-  });
-
-  afterAll(async () => {
-    await browser.close();
-  });
-
-  it("renders a error message on clicking enter with spaces as url input ", async () => {
-    await page.click("#url-input");
-    await page.type("#url-input", " ");
-    await page.click("#enter-btn");
-    let msg = await page.$eval("#res-msg", (container) => {
-      return container.innerHTML;
-    });
-    expect(msg).toBe("Invalid or no access to image URL. Try again!");
-  });
-
-  it("renders a error message on clicking enter with no input ", async () => {
-    await page.focus("#url-input");
-    await page.keyboard.press("End");
-    await page.keyboard.press("Backspace");
-
-    await page.click("#enter-btn");
-    let msg = await page.$eval("#res-msg", (container) => {
-      return container.innerHTML;
-    });
-    expect(msg).toBe("Invalid or no access to image URL. Try again!");
-  });
-
-  //   it("renders a error message on clicking predict twice on the same selected image", async () => {
-  //  // NEEDS TO RENDER PREDICTED IMAGES FIRST
-  //   });
 });
 
 describe("File upload from local storage", () => {
@@ -255,5 +215,139 @@ describe("File upload from local storage", () => {
     });
     expect(imgContainer).toBe("");
     expect(msg).toBe("Invalid image format.");
+  });
+});
+
+describe("upload an image when data from previous image is still present", () => {
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: false,
+      slowMo: 20,
+    });
+    page = await browser.newPage();
+    await page.goto(app);
+    jest.setTimeout(30000);
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it("displays the new image and removes previous image's data", async () => {
+    await page.click("#url-input");
+    await page.type("#url-input", testImage1);
+    await page.click("#enter-btn");
+    await page.click("#predict-btn");
+    // ENTER SECOND IMAGE
+    await page.$eval("#url-input", (el) => el.setSelectionRange(0, el.value.length));
+    await page.keyboard.press("Backspace");
+    // await page.click("#url-input");
+    await page.type("#url-input", testImage2);
+    await page.click("#enter-btn");
+
+    let container = await page.$eval("#selected-image-container", (container) => {
+      return container.innerHTML;
+    });
+
+    const percentage = await page.$eval("#percentage-accuracy", (ele) => {
+      return ele.innerHTML;
+    });
+    const name = await page.$eval("#name", (ele) => {
+      return ele.innerHTML;
+    });
+    const style = await page.$eval("#style", (ele) => {
+      return ele.innerHTML;
+    });
+    const release = await page.$eval("#release", (ele) => {
+      return ele.innerHTML;
+    });
+
+    expect(container).toContain(
+      `<img id="selected-image" src="${testImage2}" crossorigin="anonymous" alt="">`
+    );
+    expect(percentage).toBe("");
+    expect(name).toBe("");
+    expect(style).toBe("");
+    expect(release).toBe("");
+  });
+});
+
+describe("A unsuccessful image url upload ", () => {
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: false,
+      slowMo: 30,
+    });
+    page = await browser.newPage();
+    await page.goto(app);
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it("renders a error message and removes broken selected image on broken image upload", async () => {
+    // TEST THIS RIGHT AFTER A SUCCESSFUL PREDICTION TO CHECK IF IT REMOVES PREVIOUS ITEM INFO AND DISABLE PREDICT BUTTON AGAIN
+    await page.click("#url-input");
+    await page.type("#url-input", brokenImage);
+    await page.click("#enter-btn");
+
+    let msg = await page.$eval("#res-msg", (container) => {
+      return container.innerHTML;
+    });
+    let imgContainer = await page.$eval("#selected-image-container", (container) => {
+      return container.innerHTML;
+    });
+    expect(imgContainer).toBe("");
+    expect(msg).toBe("Invalid or no access to image URL. Try again!");
+  });
+});
+
+describe("Enter and predict buttons' error messages", () => {
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: false,
+      slowMo: 30,
+    });
+    page = await browser.newPage();
+    await page.goto(app);
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it("renders a error message on clicking enter with spaces as url input ", async () => {
+    await page.click("#url-input");
+    await page.type("#url-input", " ");
+    await page.click("#enter-btn");
+    let msg = await page.$eval("#res-msg", (container) => {
+      return container.innerHTML;
+    });
+    expect(msg).toBe("Invalid or no access to image URL. Try again!");
+  });
+
+  it("renders a error message on clicking enter with no input ", async () => {
+    await page.focus("#url-input");
+    await page.keyboard.press("End");
+    await page.keyboard.press("Backspace");
+    await page.click("#enter-btn");
+    let msg = await page.$eval("#res-msg", (container) => {
+      return container.innerHTML;
+    });
+    expect(msg).toBe("Invalid or no access to image URL. Try again!");
+  });
+
+  it("renders a error message on clicking predict twice on the same selected image", async () => {
+    await page.click("#url-input");
+    await page.type("#url-input", testImage1);
+    await page.click("#enter-btn");
+    await page.click("#predict-btn");
+    await page.click("#predict-btn");
+
+    let msg = await page.$eval("#res-msg", (container) => {
+      return container.innerHTML;
+    });
+    expect(msg).toBe("You've clicked predict again!");
   });
 });
