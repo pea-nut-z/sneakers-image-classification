@@ -1,11 +1,36 @@
 import puppeteer from "puppeteer";
 
 let browser, page;
-const app = "file:/Users/paulinez/image-classification/web/index.html";
 const githubPath = "https://pea-nut-z.github.io/sneakers-image-classification";
+// To run test in development
+// const app = "file:/Users/paulinez/image-classification/web/index.html";
+// To run test in production
+const app = `${githubPath}/index.html`;
 const testImage1 = `${githubPath}/public/data/beluga/Beluga2.0-1.jpeg`;
 const testImage2 = `${githubPath}/public/data/blue-tint/Blue-Tint-1.jpeg`;
 const brokenImage = "https://pea-nut-z.github.io.jpeg";
+
+(async () => {
+  const pti = require("puppeteer-to-istanbul");
+  const puppeteer = require("puppeteer");
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  // Enable both JavaScript and CSS coverage
+  await Promise.all([page.coverage.startJSCoverage(), page.coverage.startCSSCoverage()]);
+  // Navigate to page
+  await page.goto(app);
+  // Disable both JavaScript and CSS coverage
+  const [jsCoverage, cssCoverage] = await Promise.all([
+    page.coverage.stopJSCoverage(),
+    page.coverage.stopCSSCoverage(),
+  ]);
+  pti.write([...jsCoverage, ...cssCoverage], {
+    includeHostname: true,
+    storagePath: "./.nyc_output",
+  });
+  await browser.close();
+})();
 
 describe("Initial layout", () => {
   beforeAll(async () => {
@@ -337,7 +362,7 @@ describe("Enter and predict buttons' error messages", () => {
     expect(msg).toBe("Invalid or no access to image URL. Try again!");
   });
 
-  it("renders a error message on clicking predict twice on the same selected image", async () => {
+  it("renders a error message on clicking predict the same selec image", async () => {
     await page.click("#url-input");
     await page.type("#url-input", testImage1);
     await page.click("#enter-btn");

@@ -133,13 +133,15 @@ async function analyzeImg() {
     respond("no-prediction-returned");
   }
 }
-
 async function setLayout() {
   const path = "https://pea-nut-z.github.io/sneakers-image-classification";
   toggleLoading();
   try {
     model = await tf.loadGraphModel(`${path}/model/model.json`);
-  } catch {}
+    console.log("model loaded");
+  } catch {
+    console.log("Model did not get loaded");
+  }
   toggleLoading();
   $("#welcome-gif-container").append(
     `<img id="welcome-gif" src="${path}/public/images/welcome.gif" crossorigin="anonymous" alt="" >`
