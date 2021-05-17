@@ -3,6 +3,7 @@ let brokenImg = true;
 let newImg = false;
 let model;
 
+// LOADING MESSAGE
 function toggleLoading() {
   $("#res-msg").empty();
   $("#welcome-gif-container").empty();
@@ -18,7 +19,7 @@ function toggleLoading() {
   }
   $("#progress-dots").toggleClass("lds-ellipsis");
 }
-
+// ERROR AND NOTIFICATION MESSAGES
 function respond(res) {
   $("#res-msg").empty();
   $("#welcome-gif-container").empty();
@@ -33,7 +34,7 @@ function respond(res) {
   if (res === "error") msg = "There is an error.";
   $("#res-msg").html(msg);
 }
-
+// CLEAR ITEM INFORMATION
 function clearAllData(include) {
   if (include === "selected-image") {
     $("#selected-image-container").empty();
@@ -45,7 +46,6 @@ function clearAllData(include) {
   $("#style").empty();
   $("#release").empty();
 }
-
 // PREDICT FUNCTION
 async function analyzeImg() {
   try {
@@ -129,7 +129,7 @@ async function analyzeImg() {
     respond("prediction-error");
   }
 }
-
+// ON FIRST LOADED
 async function setLayout(test) {
   let path = ".";
   toggleLoading();
@@ -157,7 +157,7 @@ async function setLayout(test) {
     $("#file-selector").prop("disabled", true);
   }
 }
-
+// ON LOCAL FILE UPLOAD
 async function uploadFile() {
   $("#upload-btn").on("click", function () {
     $("#file-selector").on("change", function (event) {
@@ -186,7 +186,7 @@ async function uploadFile() {
     });
   });
 }
-
+// LISTEN TO INPUT TO TOGGLE ENTER BUTTON
 function toggleEnterButton() {
   $("#url-input").on("input", function () {
     let input = $("#url-input").val();
@@ -197,7 +197,7 @@ function toggleEnterButton() {
     }
   });
 }
-
+// LISTEN TO IMAGE UPLOAD TO TOGGLE PREDICT BUTTON
 function togglePredictButton() {
   $("#selected-image-container").on("DOMSubtreeModified", function () {
     let empty = $("#selected-image-container").is(":empty");
@@ -262,20 +262,9 @@ function onPredict() {
   });
 }
 
-// ON FIRST LOADED
 setLayout();
-
-// ON LOCAL FILE UPLOAD
 uploadFile();
-
-// LISTEN TO INPUT TO TOGGLE ENTER BUTTON
 toggleEnterButton();
-
-// LISTEN TO IMAGE UPLOAD TO TOGGLE PREDICT BUTTON
 togglePredictButton();
-
-// ON ENTER
 onEnter();
-
-// ON PREDICT
 onPredict();

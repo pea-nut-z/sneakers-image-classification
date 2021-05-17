@@ -11,6 +11,8 @@ The training model was done using a free tool. Paid training services would incr
 
 ### To try it out:
 
+_It may take a few seconds for the model to load. Please Wait until it says welcome in the message bubble before continuing._
+
 1. Click "choose an image" to upload a Yeezy sneaker image from your local storage OR Google search "Yeezy sneakers" for an image to copy and paste the image address to the search bar (you can find the image address by right clicking an image and clicking 'Copy image address')
 2. Click enter to upload the picture if you used an image address
 3. Click predict to start predicting!
