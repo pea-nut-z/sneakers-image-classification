@@ -5,12 +5,13 @@
   "main": "server.js",
   "scripts": {
     "test": "jest --watch",
-    "coverage": "jest --coverage",
+    "coverage": "nyc jest",
     "start": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "jquery": "^3.6.0",
     "serve-index": "^1.9.1"

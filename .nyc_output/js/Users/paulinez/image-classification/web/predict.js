@@ -1,3 +1,8 @@
+let firstLoaded = true;
+let brokenImg = true;
+let newImg = false;
+let model;
+
 function toggleLoading() {
   $("#res-msg").empty();
   $("#welcome-gif-container").empty();
@@ -20,14 +25,11 @@ function respond(res) {
   let msg;
   if (res === "upload-complete") msg = "Click predict!";
   if (res === "predict-complete") msg = "See prediction!";
-  if (res === "no-prediction-returned") msg = "No similar items were found.";
-  // click predict when there's a broken img
   if (res === "broken-url") msg = "Invalid or no access to image URL. Try again!";
-  // newImg = false && brokenImg = false (click predict twice)
   if (res === "broken-file") msg = "Invalid image format.";
-  if (res === "double-clicked-predict") msg = "You've clicked predict again!";
-  if (res === "predicted-image-error") msg = "There was an error getting the images.";
-  // general
+  if (res === "model-error") msg = "Model is not loaded.";
+  if (res === "prediction-error") msg = "Something went wrong during prediction.";
+  // other unknown edge cases for clicking predict button
   if (res === "error") msg = "There is an error.";
   $("#res-msg").html(msg);
 }
@@ -44,7 +46,7 @@ function clearAllData(include) {
   $("#release").empty();
 }
 
-// PREDICT FUNC
+// PREDICT FUNCTION
 async function analyzeImg() {
   try {
     let image = $("#selected-image").get(0);
@@ -93,12 +95,6 @@ async function analyzeImg() {
       respond("predict-complete");
     });
 
-    $("#predicted-image").on("error", function () {
-      clearAllData();
-      respond("predicted-image-error");
-      return;
-    });
-
     // Initially images stored in the filesystem directory will be
     // returned when a prediction is made.However, Github does not
     // have static directories set up out of the box.I changed my
@@ -130,45 +126,63 @@ async function analyzeImg() {
     // });
   } catch {
     toggleLoading();
-    respond("no-prediction-returned");
+    respond("prediction-error");
   }
 }
 
-async function setLayout() {
-  const path = "https://pea-nut-z.github.io/sneakers-image-classification";
+async function setLayout(test) {
+  let path = ".";
   toggleLoading();
   try {
-    model = await tf.loadGraphModel(`${path}/model/model.json`);
-  } catch {}
-  toggleLoading();
-  $("#welcome-gif-container").append(
-    `<img id="welcome-gif" src="${path}/public/images/welcome.gif" crossorigin="anonymous" alt="" >`
-  );
+    if (test === "model") {
+      // SETTING THE PATH DIFFERENTLY FOR TESTING PURPOSES
+      // COULD USE .ENV AND SOME CONFIGS ON CLIENT SIDE BUT THIS WAY IS MUCH SIMPLER FOR A SMALL TEST
+      path = "https://pea-nut-z.github.io/sneakers-image-classification";
+      model = await tf.loadGraphModel(`${path}/model/model.json`);
+    } else if (test === "error") {
+      throw error;
+    } else {
+      model = await tf.loadGraphModel("model/model.json");
+    }
+    toggleLoading();
+    $("#welcome-gif-container").append(
+      `<img id="welcome-gif" src="${path}/public/images/welcome.gif" crossorigin="anonymous" alt="" >`
+    );
+    $("#url-input").prop("disabled", false);
+    $("#file-selector").prop("disabled", false);
+  } catch {
+    toggleLoading();
+    respond("model-error");
+    $("#url-input").prop("disabled", true);
+    $("#file-selector").prop("disabled", true);
+  }
 }
 
 async function uploadFile() {
-  $("#file-selector").on("change", function (event) {
-    let selected = this.files.length;
-    if (selected) {
+  $("#upload-btn").on("click", function () {
+    $("#file-selector").on("change", function (event) {
+      let selected = this.files.length;
+      if (selected) {
+        toggleLoading();
+        clearAllData("selected-image");
+        const path = URL.createObjectURL(event.target.files[0]);
+        $("#selected-image-container").append(
+          `<img id="selected-image" src="${path}" crossorigin="anonymous" alt="">`
+        );
+      } else {
+        return;
+      }
       toggleLoading();
-      clearAllData("selected-image");
-      const path = URL.createObjectURL(event.target.files[0]);
-      $("#selected-image-container").append(
-        `<img id="selected-image" src="${path}" crossorigin="anonymous" alt="">`
-      );
-    } else {
-      return;
-    }
-    toggleLoading();
-    $("#selected-image").on("load", function () {
-      respond("upload-complete");
-      brokenImg = false;
-      newImg = true;
-    });
-    $("#selected-image").on("error", function () {
-      $("#predict-btn").prop("disabled", true);
-      clearAllData("selected-image");
-      respond("broken-file");
+      $("#selected-image").on("load", function () {
+        respond("upload-complete");
+        brokenImg = false;
+        newImg = true;
+      });
+      $("#selected-image").on("error", function () {
+        $("#predict-btn").prop("disabled", true);
+        clearAllData("selected-image");
+        respond("broken-file");
+      });
     });
   });
 }
@@ -214,6 +228,7 @@ function onEnter() {
     );
     toggleLoading();
     $("#selected-image").on("load", function () {
+      $("#url-input").val("");
       respond("upload-complete");
       brokenImg = false;
       newImg = true;
@@ -227,8 +242,11 @@ function onEnter() {
 }
 
 function onPredict() {
+  // PASSING "test" ARGUMENT FOR TESTING PURPOSES
+  // COULD USE .ENV AND SOME CONFIGS ON CLIENT SIDE BUT THIS WAY IS MUCH SIMPLER FOR A SMALL TEST
   $("#predict-btn").click(function () {
     if (!brokenImg && newImg) {
+      $("#predict-btn").prop("disabled", true);
       $("#predict-btn").html("👌");
       toggleLoading();
       setTimeout(() => {
@@ -238,18 +256,11 @@ function onPredict() {
       setTimeout(() => {
         analyzeImg();
       }, 50);
-    } else if (!newImg && !brokenImg) {
-      respond("double-clicked-predict");
     } else {
       respond("error");
     }
   });
 }
-
-let firstLoaded = true;
-let brokenImg = true;
-let newImg = false;
-let model;
 
 // ON FIRST LOADED
 setLayout();

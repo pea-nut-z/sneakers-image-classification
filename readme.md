@@ -39,9 +39,14 @@ Initially when a prediction is made, it returns a tag which will match the name 
 
 I am using Jquery and Jest testing. It has been difficult to find good resources on testing Jquery functions that do not return values but manipulate the DOM. Most examples I find test functions that return a value and you would test on the return value which is straight forward. In my case, I have functions that run on loaded and on changed. When I import these functions to test, either it does not seem to run and change the DOM or it does not get to finish running before the test blocks start running. I have tried using callbacks and asynchronous functions to resolve the conflicts with no success. For now, I have a few layout testings in place and will continue to search ways to test the functionalities. Perhaps, jest-puppeteer? I will continue to update my progress.
 
--Updates-
+Updates
 -Puppeteer turns out working very well in testing the async functions! All testings added.
 -Puppeteer requires some setup to get a test coverage report. I am now working on that and that's what .nyc_output file is for.
+
+### Tests
+
+The test coverage is 95.68%. Uncovered lines are edge cases to cover any cases that I cannot think of. That is why I am not sure how I can trigger those cases in tests.
+To see summary of coverage navigate to coverage folder then index.html or run "npm run coverage" in CLI.
 
 ### Image recognition tools used
 
