@@ -49,7 +49,7 @@ _Updates_
 ### Tests
 
 The test coverage is 95.68%. Uncovered lines are edge cases to cover any cases that I cannot think of. That is why I am not sure how I can trigger those cases in tests.
-To see summary of coverage navigate to coverage folder then index.html or run "npm run coverage" in CLI.
+To see summary of coverage go to coverage folder then index.html.
 
 ### Image recognition tools used
 
