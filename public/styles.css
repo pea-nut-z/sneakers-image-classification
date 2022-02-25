@@ -50,18 +50,15 @@ body {
 }
 
 /* TITLE & BUBBLE */
-#title-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  font-size: 30px;
-  position: relative;
-  top: 50%;
-  font-family: Courier New;
-  font-weight: bold;
-}
 #title {
   padding-left: 22px;
+  text-align: left;
+  font-size: 30px;
+  font-family: Courier New;
+  font-weight: bold;
+  padding: 8px;
+  text-decoration-line: underline;
+  text-decoration-style: double;
 }
 #results-container {
   display: flex;
@@ -74,7 +71,6 @@ body {
 }
 .subtitle {
   font-size: 22px;
-  /* background-color: pink; */
   margin-top: 20px;
 }
 .hide {
